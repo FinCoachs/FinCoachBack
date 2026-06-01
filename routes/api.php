@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
+use App\Http\Controllers\Authentication\GoogleController;
+
+// Route pour la connexion via Google
+Route::post('/auth/google', GoogleController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les détails de l'utilisateur connecté
