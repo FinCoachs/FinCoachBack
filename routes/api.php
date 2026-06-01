@@ -2,7 +2,21 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Resources\UserResource;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    // Récupérer les détails de l'utilisateur connecté
+    Route::get('/user', function (Request $request) {
+        return new UserResource($request->user());
+    });
+
+    // Déconnecter l'utilisateur en révoquant (supprimant) son token actuel 
+    Route::post('/logout', function (Request $request) {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Utilisateur déconnecté avec succès'
+        ], 200);
+    });
+});

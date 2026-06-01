@@ -24,6 +24,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'profil' => ['required', 'string', 'min:20'],
             'email' => [
                 'required',
                 'string',
@@ -32,12 +33,29 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-        ])->validate();
+        ],
+            messages:[
+                'name.required' => 'Le nom est requis.',
+                'name.string' => 'Le nom doit être une chaîne de caractères.',
+                'name.max' => 'Le nom ne doit pas dépasser 255 caractères.',
+                'profil.required' => 'Le profil est requis.',
+                'profil.string' => 'Le profil doit être une chaîne de caractères.',
+                'profil.min' => 'Le profil doit faire au moins 20 caractères.',
+                'email.required' => 'L\'adresse email est requise.',
+                'email.string' => 'L\'adresse email doit être une chaîne de caractères.',
+                'email.email' => 'L\'adresse email doit être valide.',
+                'email.max' => 'L\'adresse email ne doit pas dépasser 255 caractères.',
+                'email.unique' => 'Cette adresse email est déjà utilisée.',
+                'password.required' => 'Le mot de passe est requis.',
+                'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
+            ]
+        )->validate();
 
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'profil' => $input['profil'],
         ]);
     }
 }
