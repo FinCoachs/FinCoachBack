@@ -18,4 +18,10 @@ class TransactionService
             'date' => $dto->date
         ]);
     }
+
+    public function getAll(){
+        $transactions = Transaction::all()->where('user_id', Auth::id())->categorie();
+
+        return $transactions;
+    }
 }
