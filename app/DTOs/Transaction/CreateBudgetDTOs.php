@@ -1,6 +1,6 @@
 <?php
     namespace App\DTOs\Transaction;
-
+    use App\Http\Requests\BudgetRequest;
 
     readonly class CreateBudgetDTOs {
         public function __construct(
