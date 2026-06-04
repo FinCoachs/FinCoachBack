@@ -13,6 +13,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Compte;
+use App\Models\Categorie;
+use App\Models\Notification;
+use App\Models\Transaction;
 
 #[Fillable(['name', 'email', 'password', 'profil', 'budget', 'avatar', 'google_id', 'email_verified_at'])]
 #[Hidden(['password', 'remember_token'])]
