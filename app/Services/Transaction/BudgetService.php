@@ -21,4 +21,5 @@ class BudgetService
             'user_id' => Auth::id(),
         ]);
     }
+
 }

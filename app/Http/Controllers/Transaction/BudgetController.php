@@ -9,6 +9,7 @@ use App\Services\Transaction\BudgetService;
 use App\DTOs\Transaction\CreateBudgetDTO;
 use App\Models\Categorie;
 use Exception;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,4 +61,8 @@ class BudgetController extends Controller
             'data' => $categories
         ], 200);
     }
+
+    // public function getCategorieByName(Request $request){
+    //     $categorie_id =
+    // }
 }
