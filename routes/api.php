@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Authentication\GoogleController;
+use App\Http\Controllers\Transaction\BudgetController;
 
 // Route pour la connexion via Google
 Route::post('/auth/google', GoogleController::class);
@@ -14,7 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return new UserResource($request->user());
     });
 
-    // Déconnecter l'utilisateur en révoquant (supprimant) son token actuel 
+    // Déconnecter l'utilisateur en révoquant (supprimant) son token actuel
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();
 
@@ -23,4 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
             'message' => 'Utilisateur déconnecté avec succès'
         ], 200);
     });
+
+    // Routes pour la gestion et configuration du budget
+    Route::prefix('budgets')->group(function () {
+        Route::post('/', [BudgetController::class, 'store']);
+        Route::get('/categories', [BudgetController::class, 'categories']);
+    });
+
 });

@@ -18,6 +18,7 @@ return new class extends Migration
             // $table->string('google_token')->nullable();
             $table->string('avatar')->nullable();
             $table->text('profil')->nullable();
+            $table->decimal('budget', 15, 2)->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
