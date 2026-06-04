@@ -7,7 +7,7 @@ use App\Http\Controllers\Authentication\GoogleController;
 use App\Http\Controllers\Transaction\BudgetController;
 
 // Route pour la connexion via Google
-Route::post('/auth/google', [GoogleController::class, 'handleGoogleCallback']);
+Route::post('/auth/google', GoogleController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les détails de l'utilisateur connecté
@@ -25,10 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ], 200);
     });
 
-    // Route pour la gestion et configuration du budget
-    Route::prefix('budget')->group(function (){
-        Route::post('/create-budget', [BudgetController::class, 'createBudget']);
-        Route::get('/categories', [BudgetController::class, 'getCategorie']);
+    // Routes pour la gestion et configuration du budget
+    Route::prefix('budgets')->group(function () {
+        Route::post('/', [BudgetController::class, 'store']);
+        Route::get('/categories', [BudgetController::class, 'categories']);
     });
 
 });

@@ -42,7 +42,7 @@ class User extends Authenticatable
         return $this->hasMany(Compte::class);
     }
 
-    public function notifications(): HasMany
+    public function alertes(): HasMany
     {
         return $this->hasMany(Notification::class);
     }

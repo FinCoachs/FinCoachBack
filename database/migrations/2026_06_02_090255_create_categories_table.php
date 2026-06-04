@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->string('libelle')->default('facture');
+            $table->string('libelle');
             $table->decimal('plafond', 15, 2);
             $table->timestamps();
         });
