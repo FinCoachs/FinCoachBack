@@ -1,14 +1,18 @@
 <?php   
     use App\Services\Transaction;
     use App\DTOs\Transaction\CreateBudgetDTOs;
+    use App\Http\Resources\Transaction\BudgetRessource;
+    use App\Models\Categorie;
+    use Auth;
+    use Exception;
+    use Illuminate\Http\JsonResponse;
 
-    
     class BudgetService {
         
 
-        public function CreateBudget(CreateBudgetDTOs $budgetDTOs){
+        public function CreateBudget(CreateBudgetDTOs $budgetDTOs) : JsonResponse{
             try{
-                $budget = Budget::create([
+                $budget = Categorie::create([
                     "libelle" => $budgetDTOs->libelle,
                     "plafond" => $budgetDTOs->plafond,
                     "user_id" => Auth::user()->id,
@@ -18,6 +22,7 @@
                     return response()->json([
                         'success' => true,
                         'message' => 'Budget créé avec succès',
+                        'data' => new BudgetRessource($budget),
                     ], 200);
                 }
                 else {

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Authentication\GoogleController;
+use App\Http\Controllers\Transaction\BudgetControlelr;
 
 // Route pour la connexion via Google
 Route::post('/auth/google', [GoogleController::class, 'handleGoogleCallback']);
@@ -23,4 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
             'message' => 'Utilisateur déconnecté avec succès'
         ], 200);
     });
+
+    // Route pour la création du budget
+    Route::post('/create-budget', [BudgetControlelr::class, 'createBudget']);
+
 });
