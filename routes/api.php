@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Authentication\GoogleController;
 use App\Http\Controllers\Transaction\BudgetController;
-use App\Http\Controllers\Transaction\TranasctionController;
+use App\Http\Controllers\Transaction\TransactionController;
 
 // Route pour la connexion via Google
 Route::post('/auth/google', GoogleController::class);
@@ -32,10 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/categories', [BudgetController::class, 'categories']);
     });
 
-    //Routes pour les transaction
-    Route::prefix('transaction')->group(function() {
-        Route::post('/create',[TranasctionController::class, 'store']);
-        Route::get('/',[TranasctionController::class, 'getTransaction']);
+    // Routes pour les transactions
+    Route::prefix('transactions')->group(function () {
+        Route::post('/', [TransactionController::class, 'store']);
+        Route::get('/', [TransactionController::class, 'index']);
     });
 
 });

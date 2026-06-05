@@ -9,21 +9,23 @@ use App\Http\Resources\Transaction\TransactionResource;
 use App\Services\Transaction\TransactionService;
 use Exception;
 
-class TranasctionController extends Controller
+class TransactionController extends Controller
 {
     public function __construct(
-        private readonly TransactionService $transactionservice
-    ){}
+        private readonly TransactionService $transactionService
+    ) {}
 
-    public function store(TransactionRequest $request){
-        try{
-            $transaction = $this->transactionservice->CreateTransaction(
+    public function store(TransactionRequest $request)
+    {
+        try {
+            $transaction = $this->transactionService->createTransaction(
                 TransactionDTO::fromRequest($request)
             );
 
             return response()->json([
                 'success' => true,
-                'message' => 'Transaction créé avec succès',
+                'message' => 'Transaction créée avec succès',
+                'data'    => new TransactionResource($transaction),
             ], 201);
         } catch (Exception $e) {
             return response()->json([
@@ -33,15 +35,16 @@ class TranasctionController extends Controller
         }
     }
 
-    public function getTransaction(){
-        try{
-            $transaction = $this->transactionservice->getByUser();
-                return response()->json([
-                    'success' => true,
-                    'data' => new TransactionResource($transaction)
-                ], 200);
+    public function index()
+    {
+        try {
+            $transactions = $this->transactionService->getByUser();
 
-        }catch(Exception $e){
+            return response()->json([
+                'success' => true,
+                'data'    => TransactionResource::collection($transactions),
+            ], 200);
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

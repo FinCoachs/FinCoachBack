@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class TransactionRequest extends FormRequest
 {
@@ -23,11 +25,14 @@ class TransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'categorie_id' => 'required|exists:categories,id',
-            'montant' => 'required|numeric|min:0',
-            'type' => 'required|in:depense,revenu',
-            'description' => 'required|string',
-            'date' => 'required|date',
+            'categorie_id' => [
+                'required',
+                Rule::exists('categories', 'id')->where('user_id', Auth::id()),
+            ],
+            'montant'     => 'required|numeric|min:0',
+            'type'        => 'required|in:depense,revenu',
+            'description' => 'nullable|string|max:500',
+            'date'        => 'required|date',
         ];
     }
 
@@ -35,11 +40,12 @@ class TransactionRequest extends FormRequest
     {
         return [
             'categorie_id.required' => 'La catégorie est requise',
-            'montant.required' => 'Le montant est requis',
-            'type.required' => 'Le type est requis',
-            'description.required' => 'La description est requise',
-            'date.required' => 'La date est requise',
-            'date.date' => 'La date doit être une date valide',
+            'categorie_id.exists'   => 'La catégorie sélectionnée est invalide ou ne vous appartient pas',
+            'montant.required'      => 'Le montant est requis',
+            'type.required'         => 'Le type est requis',
+            'type.in'               => 'Le type doit être "depense" ou "revenu"',
+            'date.required'         => 'La date est requise',
+            'date.date'             => 'La date doit être une date valide',
         ];
     }
 }
