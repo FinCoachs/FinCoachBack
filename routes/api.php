@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //Routes pour les transaction
     Route::prefix('transaction')->group(function() {
         Route::post('/create',[TranasctionController::class, 'store']);
+        Route::get('/',[TranasctionController::class, 'getTransaction']);
     });
 
 });

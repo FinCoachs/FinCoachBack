@@ -19,9 +19,8 @@ class TransactionService
         ]);
     }
 
-    public function getAll(){
+    public function getByUser(){
         $transactions = Transaction::all()->where('user_id', Auth::id())->categorie();
-
         return $transactions;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Resources\Transaction;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionResource extends JsonResource
 {
@@ -14,6 +15,14 @@ class TransactionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'categorie_id' => $this->categorie_id,
+            'montant' => $this->montant,
+            'type' => $this->type,
+            'description' => $this->description,
+            'date'=> $this->date,
+            'user_id' => Auth::id()
+        ];
     }
 }
