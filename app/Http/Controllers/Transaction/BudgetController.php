@@ -60,4 +60,8 @@ class BudgetController extends Controller
             'data' => $categories
         ], 200);
     }
+
+    // public function getCategorieByName(Request $request){
+    //     $categorie_id =
+    // }
 }

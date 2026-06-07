@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('montant', 15, 2);
             $table->date('date');
             $table->string('description')->nullable();
-            $table->enum('type', ['depense', 'entree']);
+            $table->enum('type', ['depense', 'revenu']);
             $table->timestamps();
         });
     }
