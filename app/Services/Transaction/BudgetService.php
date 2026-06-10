@@ -4,7 +4,7 @@ namespace App\Services\Transaction;
 
 use App\DTOs\Transaction\CreateBudgetDTO;
 use App\Models\Categorie;
-use App\Models\Transaction;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class BudgetService
@@ -21,6 +21,11 @@ class BudgetService
             'plafond' => $dto->plafond,
             'user_id' => Auth::id(),
         ]);
+    }
+
+    public function getCategories(): Collection
+    {
+        return Categorie::where('user_id', Auth::id())->get();
     }
 
     /**

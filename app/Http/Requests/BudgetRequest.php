@@ -24,7 +24,7 @@ class BudgetRequest extends FormRequest
     {
         return [
             "libelle" => "required|string|max:255",
-            "plafond" => "required|numeric|min:0",
+            "plafond" => "required|numeric|min:0.01",
         ];
     }
 

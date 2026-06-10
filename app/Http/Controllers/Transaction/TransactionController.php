@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transaction;
 
 use App\DTOs\Transaction\TransactionDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TransactionFilterRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Services\Transaction\TransactionService;
@@ -54,7 +55,46 @@ class TransactionController extends Controller
     }
 
     //Fonction pour filtrer les transactions
-    public function filterTransaction(){
-        
+    public function filterTransaction(TransactionFilterRequest $request)
+    {
+        try {
+            // Use validated request data as filter input (fallback to avoid undefined DTO)
+            $transactions = $this->transactionService->filter(
+                $request->validated()
+            );
+
+            return response()->json([
+                'success' => true,
+                'data'    => TransactionResource::collection($transactions),
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    //Fonction pour retourner une sorte de statistique des transactions du mois
+    public function montantStatistique(){
+        try{
+            $revenus = $this->transactionService->sommeTransaction('revenu');
+            $depenses = $this->transactionService->sommeTransaction('depense');
+            $net = $revenus - $depenses;
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'revenu' => $revenus,
+                    'depenses' => $depenses,
+                    'net' => $net
+                ]
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
