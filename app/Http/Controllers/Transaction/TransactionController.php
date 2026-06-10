@@ -76,7 +76,7 @@ class TransactionController extends Controller
     }
 
     //Fonction pour retourner une sorte de statistique des transactions du mois
-    public function statistique(){
+    public function montantStatistique(){
         try{
             $revenus = $this->transactionService->sommeTransaction('revenu');
             $depenses = $this->transactionService->sommeTransaction('depense');
