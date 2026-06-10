@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\DTOs\Transaction\TransactionDTO;
+use App\DTOs\Transaction\TransactionFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionFilterRequest;
 use App\Http\Requests\TransactionRequest;
+use Illuminate\Http\Request;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Services\Transaction\TransactionService;
 use Exception;
@@ -37,10 +39,11 @@ class TransactionController extends Controller
     }
 
     //Fonction pour la liste des transactions d'un utilisateur
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $transactions = $this->transactionService->getByUser();
+            $limit = $request->integer('limit', 6);
+            $transactions = $this->transactionService->getByUser($limit);
 
             return response()->json([
                 'success' => true,
@@ -58,9 +61,8 @@ class TransactionController extends Controller
     public function filterTransaction(TransactionFilterRequest $request)
     {
         try {
-            // Use validated request data as filter input (fallback to avoid undefined DTO)
             $transactions = $this->transactionService->filter(
-                $request->validated()
+                TransactionFilterDTO::fromRequest($request)
             );
 
             return response()->json([

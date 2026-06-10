@@ -21,7 +21,10 @@ class CompteService
 
     public function comptes(): Collection
     {
-        return Compte::where('user_id', Auth::id())->get();
+        return Compte::where('user_id', Auth::id())
+            ->withSum('revenus', 'montant')
+            ->withSum('depenses', 'montant')
+            ->get();
     }
 
     // Calcule le solde réel d'un compte à partir de ses transactions

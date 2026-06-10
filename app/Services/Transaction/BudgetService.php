@@ -25,7 +25,9 @@ class BudgetService
 
     public function getCategories(): Collection
     {
-        return Categorie::where('user_id', Auth::id())->get();
+        return Categorie::where('user_id', Auth::id())
+            ->withSum('depenses', 'montant')
+            ->get();
     }
 
     /**
@@ -45,7 +47,6 @@ class BudgetService
      */
     public function prixTotal(Categorie $categorie): float
     {
-        // la categorie appartient déjà à l'utilisateur → pas besoin de filtrer par user_id
         return (float) $categorie->transactions()
             ->where('type', 'depense')
             ->sum('montant');

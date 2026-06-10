@@ -3,6 +3,7 @@
 namespace App\Services\Transaction;
 
 use App\DTOs\Transaction\TransactionDTO;
+use App\DTOs\Transaction\TransactionFilterDTO;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,17 @@ class TransactionService
             ->whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))
             ->latest('date')
             ->limit($limit)
+            ->get();
+    }
+
+    public function filter(TransactionFilterDTO $dto): Collection
+    {
+        return Transaction::with(['categorie', 'compte'])
+            ->whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))
+            ->when($dto->categorie_id, fn($q) => $q->where('categorie_id', $dto->categorie_id))
+            ->when($dto->type,         fn($q) => $q->where('type', $dto->type))
+            ->when($dto->search,       fn($q) => $q->where('description', 'like', "%{$dto->search}%"))
+            ->latest('date')
             ->get();
     }
 

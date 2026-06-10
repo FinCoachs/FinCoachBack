@@ -22,4 +22,9 @@ class Categorie extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function depenses(): HasMany
+    {
+        return $this->hasMany(Transaction::class)->where('type', 'depense');
+    }
 }

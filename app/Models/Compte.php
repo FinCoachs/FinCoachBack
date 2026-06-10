@@ -22,4 +22,14 @@ class Compte extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function revenus(): HasMany
+    {
+        return $this->hasMany(Transaction::class)->where('type', 'revenu');
+    }
+
+    public function depenses(): HasMany
+    {
+        return $this->hasMany(Transaction::class)->where('type', 'depense');
+    }
 }
