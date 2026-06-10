@@ -12,7 +12,6 @@ class TransactionService
     public function createTransaction(TransactionDTO $dto): Transaction
     {
         return Transaction::create([
-            'user_id'      => Auth::id(),
             'categorie_id' => $dto->categorie_id,
             'montant'      => $dto->montant,
             'type'         => $dto->type,
@@ -23,8 +22,9 @@ class TransactionService
 
     public function getByUser(): Collection
     {
+        // transactions n'a pas de user_id → on filtre via les catégories de l'utilisateur
         return Transaction::with('categorie')
-            ->where('user_id', Auth::id())
+            ->whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))
             ->latest('date')
             ->get();
     }

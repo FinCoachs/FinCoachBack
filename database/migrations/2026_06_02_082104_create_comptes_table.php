@@ -15,6 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('solde', 15, 2)->default(0.00);
+            $table->string('libelle');
+            $table->string('numero');
+            $table->date('date');
             $table->timestamps();
         });
     }

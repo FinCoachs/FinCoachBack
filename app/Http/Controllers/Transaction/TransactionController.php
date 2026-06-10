@@ -35,6 +35,7 @@ class TransactionController extends Controller
         }
     }
 
+    //Fonction pour la liste des transactions d'un utilisateur
     public function index()
     {
         try {
@@ -50,5 +51,10 @@ class TransactionController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    //Fonction pour filtrer les transactions
+    public function filterTransaction(){
+        
     }
 }

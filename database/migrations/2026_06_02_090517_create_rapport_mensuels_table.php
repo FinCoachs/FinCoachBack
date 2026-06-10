@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('rapport_mensuels', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('transaction_id')->constrained()->cascadeOnDelete();
             $table->text('description');
             $table->date('mois');
             $table->timestamps();

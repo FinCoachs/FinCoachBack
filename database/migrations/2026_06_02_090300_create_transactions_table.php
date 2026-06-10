@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('categorie_id')->constrained()->cascadeOnDelete();
             $table->decimal('montant', 15, 2);
             $table->date('date');

@@ -61,7 +61,18 @@ class BudgetController extends Controller
         ], 200);
     }
 
-    // public function getCategorieByName(Request $request){
-    //     $categorie_id =
-    // }
+    //Fonction pour lister les budgets en fonction de la categorie
+    public function BudgetListes(){
+        $categories = $this->budgetService;
+    }
+
+    //Fonction pour filtrer les budgets
+    public function filterBudget(){
+
+    }
+
+    //Fonction pour la modification du budget
+    public function updateBudget(){
+
+    }
 }
