@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\DTOs\Transaction\TransactionDTO;
-use App\DTOs\Transaction\TransactionFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionFilterRequest;
 use App\Http\Requests\TransactionRequest;
@@ -59,8 +58,9 @@ class TransactionController extends Controller
     public function filterTransaction(TransactionFilterRequest $request)
     {
         try {
+            // Use validated request data as filter input (fallback to avoid undefined DTO)
             $transactions = $this->transactionService->filter(
-                TransactionFilterDTO::fromRequest($request)
+                $request->validated()
             );
 
             return response()->json([

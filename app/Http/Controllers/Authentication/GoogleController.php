@@ -8,12 +8,9 @@ use Illuminate\Http\Request;
 
 class GoogleController extends Controller
 {
-    protected GoogleAuthService $googleAuthService;
-
-    public function __construct(GoogleAuthService $googleAuthService)
-    {
-        $this->googleAuthService = $googleAuthService;
-    }
+    public function __construct(
+        private readonly GoogleAuthService $googleAuthService
+    ) {}
 
     public function __invoke(Request $request)
     {
