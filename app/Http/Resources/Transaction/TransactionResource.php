@@ -24,6 +24,11 @@ class TransactionResource extends JsonResource
                 'id'      => $this->categorie->id,
                 'libelle' => $this->categorie->libelle,
             ]),
+            'compte'      => $this->whenLoaded('compte', fn() => [
+                'id'      => $this->compte->id,
+                'libelle' => $this->compte->libelle,
+                'numero'  => $this->compte->numero,
+            ]),
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +23,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -46,7 +45,12 @@ class User extends Authenticatable
 
     public function alertes(): HasMany
     {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(Alerte::class);
+    }
+
+    public function rapportsMensuels(): HasMany
+    {
+        return $this->hasMany(RapportMensuel::class);
     }
 
     public function messages(): HasMany

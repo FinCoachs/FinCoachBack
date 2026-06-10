@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-#[Fillable(['transaction_id', 'description', 'mois'])]
+#[Fillable(['user_id', 'description', 'mois'])]
 class RapportMensuel extends Model
 {
     use HasUuids;
 
-    public function transaction(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->belongsTo(User::class);
     }
 }

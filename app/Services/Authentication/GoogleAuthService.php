@@ -2,6 +2,7 @@
 
 namespace App\Services\Authentication;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
@@ -15,17 +16,16 @@ class GoogleAuthService
         ]);
 
         try {
-            // Vérification du token Google par Socialite
+            /** @var \Laravel\Socialite\Two\User $googleUser */
             $googleUser = Socialite::driver('google')
                 ->stateless()
                 ->userFromToken($request->token);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return response()->json([
                 'message' => 'Token Google invalide.',
             ], 401);
         }
 
-        // Création ou mise à jour de l'utilisateur
         $user = User::updateOrCreate(
             ['email' => $googleUser->getEmail()],
             [
@@ -36,13 +36,12 @@ class GoogleAuthService
             ]
         );
 
-        // Générer le token Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'success' => true,
             'data'    => [
-                'user'  => $user,
+                'user'  => new UserResource($user),
                 'token' => $token,
             ],
         ]);

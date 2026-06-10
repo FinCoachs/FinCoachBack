@@ -12,6 +12,7 @@ readonly class TransactionDTO
         public ?string $description,
         public string $type,
         public string $categorie_id,
+        public string $compte_id,
     ) {}
 
     public static function fromRequest(TransactionRequest $request){
@@ -21,6 +22,7 @@ readonly class TransactionDTO
             $request->validated('description'),
             $request->validated('type'),
             $request->validated('categorie_id'),
+            $request->validated('compte_id'),
         );
     }
 }
