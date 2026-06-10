@@ -19,7 +19,7 @@ class CompteRequest extends FormRequest
     {
         return [
             'libelle' => ['required', 'string', 'min:3'],
-            'numero'  => ['required', 'string', 'min:8'],
+            'numero'  => ['required', 'string', 'min:8', 'unique:comptes,numero'],
         ];
     }
 
@@ -32,6 +32,7 @@ class CompteRequest extends FormRequest
             'numero.required'  => 'Le numéro de compte est requis',
             'numero.string'    => 'Le numéro de compte doit être une chaîne de caractères',
             'numero.min'       => 'Le numéro de compte doit contenir au moins 8 caractères',
+            'numero.unique'       => 'Le numéro de compte doit être unique',
         ];
     }
 }

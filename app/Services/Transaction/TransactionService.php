@@ -42,6 +42,7 @@ class TransactionService
             ->get();
     }
 
+    //Fonction pour la somme des transactions qui servira de solde globale de l'utilisateur
     public function sommeTransaction(string $type): float
     {
         return (float) Transaction::whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))
