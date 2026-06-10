@@ -29,6 +29,10 @@ class TransactionRequest extends FormRequest
                 'required',
                 Rule::exists('categories', 'id')->where('user_id', Auth::id()),
             ],
+            'compte_id' => [
+                'required',
+                Rule::exists('comptes', 'id')->where('user_id', Auth::id()),
+            ],
             'montant'     => 'required|numeric|min:0',
             'type'        => 'required|in:depense,revenu',
             'description' => 'nullable|string|max:500',
@@ -41,6 +45,8 @@ class TransactionRequest extends FormRequest
         return [
             'categorie_id.required' => 'La catégorie est requise',
             'categorie_id.exists'   => 'La catégorie sélectionnée est invalide ou ne vous appartient pas',
+            'compte_id.required'    => 'Le compte est requis',
+            'compte_id.exists'      => 'Le compte sélectionné est invalide ou ne vous appartient pas',
             'montant.required'      => 'Le montant est requis',
             'type.required'         => 'Le type est requis',
             'type.in'               => 'Le type doit être "depense" ou "revenu"',

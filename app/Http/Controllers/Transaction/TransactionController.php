@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\DTOs\Transaction\TransactionDTO;
+use App\DTOs\Transaction\TransactionFilterDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TransactionFilterRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Services\Transaction\TransactionService;
@@ -54,7 +56,22 @@ class TransactionController extends Controller
     }
 
     //Fonction pour filtrer les transactions
-    public function filterTransaction(){
-        
+    public function filterTransaction(TransactionFilterRequest $request)
+    {
+        try {
+            $transactions = $this->transactionService->filter(
+                TransactionFilterDTO::fromRequest($request)
+            );
+
+            return response()->json([
+                'success' => true,
+                'data'    => TransactionResource::collection($transactions),
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

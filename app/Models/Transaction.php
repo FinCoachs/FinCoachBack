@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-#[Fillable(['categorie_id', 'montant', 'type', 'description', 'date'])]
+#[Fillable(['categorie_id', 'compte_id', 'montant', 'type', 'description', 'date'])]
 class Transaction extends Model
 {
     use HasUuids;
@@ -16,6 +16,11 @@ class Transaction extends Model
     public function categorie(): BelongsTo
     {
         return $this->belongsTo(Categorie::class);
+    }
+
+    public function compte(): BelongsTo
+    {
+        return $this->belongsTo(Compte::class);
     }
 
     public function rapportMensuel(): HasOne
