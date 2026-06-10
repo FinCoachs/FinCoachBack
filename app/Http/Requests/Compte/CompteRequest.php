@@ -24,7 +24,6 @@ class CompteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'solde' => ['nullable', 'decimal:15,2'],
             'libelle' => ['required', 'string', 'min:3'],
             'numero' => ['required', 'string', 'min:8']
         ];
@@ -33,6 +32,6 @@ class CompteRequest extends FormRequest
     #[Override]
     public function messages()
     {
-        
+
     }
 }
