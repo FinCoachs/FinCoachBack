@@ -30,17 +30,6 @@ class TransactionService
             ->get();
     }
 
-    public function filter(object $dto): Collection
-    {
-        return Transaction::with(['categorie', 'compte'])
-            ->whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))
-            ->when($dto->categorie_id, fn($q) => $q->where('categorie_id', $dto->categorie_id))
-            ->when($dto->type,         fn($q) => $q->where('type', $dto->type))
-            ->when($dto->search,       fn($q) => $q->where('description', 'like', "%{$dto->search}%"))
-            ->latest('date')
-            ->get();
-    }
-
     public function sommeTransaction(string $type): float
     {
         return (float) Transaction::whereHas('categorie', fn($q) => $q->where('user_id', Auth::id()))

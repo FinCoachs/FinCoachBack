@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('solde', 15, 2)->default(0.00);
             $table->string('libelle');
             $table->string('numero');
-            $table->date('date');
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }
