@@ -74,4 +74,27 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    //Fonction pour retourner une sorte de statistique des transactions du mois
+    public function statistique(){
+        try{
+            $revenus = $this->transactionService->sommeTransaction('revenu');
+            $depenses = $this->transactionService->sommeTransaction('depense');
+            $net = $revenus - $depenses;
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'revenu' => $revenus,
+                    'depenses' => $depenses,
+                    'net' => $net
+                ]
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
