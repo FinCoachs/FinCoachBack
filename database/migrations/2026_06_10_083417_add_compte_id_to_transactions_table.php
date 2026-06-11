@@ -6,13 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    public $withinTransaction = false;
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreignUuid('compte_id')->after('categorie_id')->constrained()->cascadeOnDelete();
+            if (!Schema::hasColumn('transactions', 'compte_id')) {
+                $table->foreignUuid('compte_id')->after('categorie_id')->constrained()->cascadeOnDelete();
+            }
         });
     }
 
