@@ -7,10 +7,22 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Disable transaction wrapping for PostgreSQL DDL compatibility.
+     * PostgreSQL aborts the whole transaction block if one DDL statement fails,
+     * which causes cascading failures on retry. Running outside a transaction
+     * allows each statement to succeed or fail independently.
+     */
+    public bool $withinTransaction = false;
+
+    /**
      * Run the migrations.
      */
     public function up(): void
     {
+        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
+
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
