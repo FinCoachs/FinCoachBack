@@ -3,12 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
+use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Authentication\GoogleController;
 use App\Http\Controllers\Transaction\BudgetController;
 use App\Http\Controllers\Transaction\TransactionController;
 use App\Http\Controllers\Compte\CompteController;
 
 Route::post('/auth/google', GoogleController::class);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
