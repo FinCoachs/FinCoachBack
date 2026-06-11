@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable(['user_id', 'libelle', 'solde', 'numero', 'date'])]
+#[Fillable(['user_id', 'libelle', 'solde', 'numero', 'solde_initial', 'date'])]
 class Compte extends Model
 {
     use HasFactory, HasUuids;

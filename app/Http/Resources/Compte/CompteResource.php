@@ -13,7 +13,7 @@ class CompteResource extends JsonResource
             'id'      => $this->id,
             'libelle' => $this->libelle,
             'numero'  => $this->numero,
-            'solde'   => (float)(($this->revenus_sum ?? 0) - ($this->depenses_sum ?? 0)),
+            'solde'   => (float)(($this->solde_initial ?? 0) + ($this->revenus_sum ?? 0) - ($this->depenses_sum ?? 0)),
             'date'    => $this->date,
         ];
     }

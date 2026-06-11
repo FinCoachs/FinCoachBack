@@ -12,10 +12,11 @@ class CompteService
     public function create(CreateCompteDTO $dto): Compte
     {
         return Compte::create([
-            'user_id' => Auth::id(),
-            'libelle' => $dto->libelle,
-            'numero'  => $dto->numero,
-            'date'    => now(),
+            'user_id'       => Auth::id(),
+            'libelle'       => $dto->libelle,
+            'numero'        => $dto->numero,
+            'solde_initial' => $dto->solde_initial,
+            'date'          => now(),
         ]);
     }
 

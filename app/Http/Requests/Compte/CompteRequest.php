@@ -18,8 +18,9 @@ class CompteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'libelle' => ['required', 'string', 'min:3'],
-            'numero'  => ['required', 'string', 'min:8', 'unique:comptes,numero'],
+            'libelle'       => ['required', 'string', 'min:3'],
+            'numero'        => ['required', 'string', 'min:8', 'unique:comptes,numero'],
+            'solde_initial' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
