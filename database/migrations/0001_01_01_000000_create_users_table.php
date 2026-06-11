@@ -12,7 +12,7 @@ return new class extends Migration
      * which causes cascading failures on retry. Running outside a transaction
      * allows each statement to succeed or fail independently.
      */
-    public bool $withinTransaction = false;
+    public $withinTransaction = false;
 
     /**
      * Run the migrations.
