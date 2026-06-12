@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Authentication\GoogleController;
 use App\Http\Controllers\AlerteController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RecommandationsController;
 use App\Http\Controllers\Transaction\BudgetController;
 use App\Http\Controllers\Transaction\TransactionController;
@@ -73,7 +74,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/alertes/lire',     [AlerteController::class, 'markAllRead']);
     Route::post('/user/push-token',  [AlerteController::class, 'savePushToken']);
 
-    // Recommandations IA (rule-based)
+    // Recommandations IA
     Route::get('/recommandations', [RecommandationsController::class, 'index']);
+
+    // Chat Coach IA
+    Route::get('/messages',    [MessageController::class, 'index']);
+    Route::post('/messages',   [MessageController::class, 'store']);
+    Route::delete('/messages', [MessageController::class, 'destroy']);
 
 });
