@@ -12,7 +12,7 @@ class TransactionService
 {
     public function createTransaction(TransactionDTO $dto): Transaction
     {
-        return Transaction::create([
+        $transaction = Transaction::create([
             'categorie_id' => $dto->categorie_id,
             'compte_id'    => $dto->compte_id,
             'montant'      => $dto->montant,
@@ -20,6 +20,8 @@ class TransactionService
             'description'  => $dto->description,
             'date'         => $dto->date,
         ]);
+
+        return $transaction->load(['categorie', 'compte']);
     }
 
     public function getByUser(int $limit = 6): Collection

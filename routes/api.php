@@ -16,8 +16,13 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());
+        return response()->json([
+            'success' => true,
+            'data'    => new UserResource($request->user()),
+        ]);
     });
+
+    Route::patch('/user/profil', [AuthController::class, 'updateProfil']);
 
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();

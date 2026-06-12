@@ -35,6 +35,13 @@ class AuthController extends Controller
         ]);
     }
 
+    public function updateProfil(Request $request)
+    {
+        $request->validate(['profil' => 'nullable|string']);
+        $request->user()->update(['profil' => $request->profil]);
+        return response()->json(['success' => true]);
+    }
+
     public function register(Request $request)
     {
         $request->validate([

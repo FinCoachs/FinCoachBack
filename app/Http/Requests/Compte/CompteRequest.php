@@ -4,6 +4,8 @@ namespace App\Http\Requests\Compte;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CompteRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class CompteRequest extends FormRequest
     {
         return [
             'libelle'       => ['required', 'string', 'min:3'],
-            'numero'        => ['required', 'string', 'min:8', 'unique:comptes,numero'],
+            'numero'        => ['required', 'string', 'min:8', Rule::unique('comptes', 'numero')->where('user_id', Auth::id())],
             'solde_initial' => ['nullable', 'numeric', 'min:0'],
         ];
     }
