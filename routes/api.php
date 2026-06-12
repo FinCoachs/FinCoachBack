@@ -15,6 +15,14 @@ Route::post('/auth/google', GoogleController::class);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+Route::post('/scheduler/run', function (Request $request) {
+    if ($request->header('X-Scheduler-Token') !== env('SCHEDULER_TOKEN')) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    \Illuminate\Support\Facades\Artisan::call('schedule:run');
+    return response()->json(['success' => true]);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', function (Request $request) {
