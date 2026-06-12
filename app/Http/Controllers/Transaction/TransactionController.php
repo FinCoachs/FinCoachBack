@@ -7,10 +7,12 @@ use App\DTOs\Transaction\TransactionFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionFilterRequest;
 use App\Http\Requests\TransactionRequest;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Services\Transaction\TransactionService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -74,6 +76,21 @@ class TransactionController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $transaction = Transaction::whereHas(
+                'categorie', fn($q) => $q->where('user_id', Auth::id())
+            )->findOrFail($id);
+
+            $transaction->delete();
+
+            return response()->json(['success' => true, 'message' => 'Transaction supprimée']);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 

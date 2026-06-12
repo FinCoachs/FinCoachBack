@@ -23,8 +23,8 @@ class BudgetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "libelle" => "required|string|max:255",
-            "plafond" => "required|numeric|min:0.01",
+            'libelle' => 'required|string|max:255',
+            'plafond' => 'nullable|numeric|min:0.01',
         ];
     }
 

@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('budgets')->group(function () {
         Route::post('/',           [BudgetController::class, 'store']);
         Route::get('/categories',  [BudgetController::class, 'categories']);
+        Route::put('/{id}',        [BudgetController::class, 'update']);
+        Route::delete('/{id}',     [BudgetController::class, 'destroy']);
     });
 
     // Transactions
@@ -39,12 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/',        [TransactionController::class, 'index']);
         Route::get('/filter',  [TransactionController::class, 'filterTransaction']);
         Route::get('/stats',   [TransactionController::class, 'montantStatistique']);
+        Route::delete('/{id}', [TransactionController::class, 'destroy']);
     });
 
     // Comptes
     Route::prefix('comptes')->group(function () {
-        Route::post('/', [CompteController::class, 'store']);
-        Route::get('/',  [CompteController::class, 'index']);
+        Route::post('/',       [CompteController::class, 'store']);
+        Route::get('/',        [CompteController::class, 'index']);
+        Route::delete('/{id}', [CompteController::class, 'destroy']);
     });
 
 });

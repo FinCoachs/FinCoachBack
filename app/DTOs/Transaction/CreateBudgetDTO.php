@@ -8,14 +8,14 @@ readonly class CreateBudgetDTO
 {
     public function __construct(
         public string $libelle,
-        public float $plafond,
+        public ?float $plafond = null,
     ) {}
 
     public static function fromRequest(BudgetRequest $request): self
     {
         return new self(
             $request->validated('libelle'),
-            $request->validated('plafond'),
+            $request->validated('plafond') !== null ? (float) $request->validated('plafond') : null,
         );
     }
 }

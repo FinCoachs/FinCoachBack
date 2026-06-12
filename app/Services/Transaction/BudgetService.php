@@ -23,6 +23,24 @@ class BudgetService
         ]);
     }
 
+    public function updateBudget(Categorie $categorie, array $data): Categorie
+    {
+        $updates = [];
+        if (isset($data['libelle'])) $updates['libelle'] = $data['libelle'];
+        if (isset($data['plafond'])) $updates['plafond'] = (float) $data['plafond'];
+
+        if (!empty($updates)) {
+            $categorie->update($updates);
+        }
+
+        return $categorie->fresh();
+    }
+
+    public function deleteBudget(Categorie $categorie): void
+    {
+        $categorie->delete();
+    }
+
     public function getCategories(): Collection
     {
         return Categorie::where('user_id', Auth::id())
