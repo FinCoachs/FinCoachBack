@@ -22,7 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    Route::patch('/user/profil', [AuthController::class, 'updateProfil']);
+    Route::patch('/user',          [AuthController::class, 'updateInfo']);
+    Route::patch('/user/password', [AuthController::class, 'updatePassword']);
+    Route::patch('/user/profil',   [AuthController::class, 'updateProfil']);
 
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();

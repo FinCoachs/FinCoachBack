@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -39,6 +40,40 @@ class AuthController extends Controller
     {
         $request->validate(['profil' => 'nullable|string']);
         $request->user()->update(['profil' => $request->profil]);
+        return response()->json(['success' => true]);
+    }
+
+    public function updateInfo(Request $request)
+    {
+        $request->validate([
+            'name'  => 'sometimes|string|max:255',
+            'email' => ['sometimes', 'email', Rule::unique('users', 'email')->ignore($request->user()->id)],
+        ]);
+
+        $request->user()->update($request->only('name', 'email'));
+
+        return response()->json([
+            'success' => true,
+            'data'    => new UserResource($request->user()->fresh()),
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password'         => 'required|string|min:8|confirmed',
+        ]);
+
+        if (! Hash::check($request->current_password, $request->user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mot de passe actuel incorrect.',
+            ], 422);
+        }
+
+        $request->user()->update(['password' => Hash::make($request->password)]);
+
         return response()->json(['success' => true]);
     }
 
