@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 
-#[Fillable(['name', 'email', 'password', 'profil', 'budget', 'avatar', 'google_id', 'email_verified_at'])]
+#[Fillable(['name', 'email', 'password', 'profil', 'budget', 'avatar', 'google_id', 'email_verified_at', 'expo_push_token'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

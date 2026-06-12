@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable(['user_id', 'message', 'date'])]
+#[Fillable(['user_id', 'message', 'type', 'lue', 'date'])]
 class Alerte extends Model
 {
     use HasFactory, HasUuids;

@@ -19,7 +19,8 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // use dynamic where to avoid custom where signature issues
+        $user = User::whereEmail($request->email)->first();
 
         if (! $user || ! $user->password || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Authentication\GoogleController;
+use App\Http\Controllers\AlerteController;
+use App\Http\Controllers\RecommandationsController;
 use App\Http\Controllers\Transaction\BudgetController;
 use App\Http\Controllers\Transaction\TransactionController;
 use App\Http\Controllers\Compte\CompteController;
@@ -57,5 +59,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/',        [CompteController::class, 'index']);
         Route::delete('/{id}', [CompteController::class, 'destroy']);
     });
+
+    // Alertes & push token
+    Route::get('/alertes',           [AlerteController::class, 'index']);
+    Route::post('/alertes/lire',     [AlerteController::class, 'markAllRead']);
+    Route::post('/user/push-token',  [AlerteController::class, 'savePushToken']);
+
+    // Recommandations IA (rule-based)
+    Route::get('/recommandations', [RecommandationsController::class, 'index']);
 
 });
