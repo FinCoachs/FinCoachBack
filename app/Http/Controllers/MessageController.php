@@ -12,8 +12,9 @@ class MessageController extends Controller
     /** GET /messages — historique de la conversation */
     public function index()
     {
-        $messages = Message::where('user_id', Auth::id())
-            ->orderBy('date')
+        $messages = Message::query()
+            ->where('user_id', '=', Auth::id())
+            ->orderBy('date', 'asc')
             ->get(['id', 'contenu', 'expediteur', 'date']);
 
         return response()->json(['success' => true, 'data' => $messages]);
