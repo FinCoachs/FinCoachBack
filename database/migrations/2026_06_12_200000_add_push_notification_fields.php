@@ -1,26 +1,24 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    // Désactive la transaction globale : chaque instruction est indépendante
+    public $withinTransaction = false;
+
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('expo_push_token')->nullable()->after('profil');
-        });
-
-        Schema::table('alertes', function (Blueprint $table) {
-            $table->string('type')->default('alerte')->after('message'); // 'alerte' | 'info'
-            $table->boolean('lue')->default(false)->after('type');
-        });
+        DB::statement('ALTER TABLE users    ADD COLUMN IF NOT EXISTS expo_push_token VARCHAR(255) NULL');
+        DB::statement("ALTER TABLE alertes  ADD COLUMN IF NOT EXISTS type VARCHAR(255) NOT NULL DEFAULT 'alerte'");
+        DB::statement('ALTER TABLE alertes  ADD COLUMN IF NOT EXISTS lue  BOOLEAN      NOT NULL DEFAULT FALSE');
     }
 
     public function down(): void
     {
-        Schema::table('users',   fn (Blueprint $t) => $t->dropColumn('expo_push_token'));
-        Schema::table('alertes', fn (Blueprint $t) => $t->dropColumn(['type', 'lue']));
+        DB::statement('ALTER TABLE users   DROP COLUMN IF EXISTS expo_push_token');
+        DB::statement('ALTER TABLE alertes DROP COLUMN IF EXISTS type');
+        DB::statement('ALTER TABLE alertes DROP COLUMN IF EXISTS lue');
     }
 };
