@@ -28,15 +28,9 @@ class MessageController extends Controller
         $user = Auth::user();
         $now  = now();
 
-        // Sauvegarde du message utilisateur
-        Message::create([
-            'user_id'    => $user->id,
-            'contenu'    => $request->contenu,
-            'expediteur' => 'utilisateur',
-            'date'       => $now,
-        ]);
-
-        // Génération de la réponse IA
+        // L'agent est appelé AVANT la sauvegarde du message utilisateur pour que
+        // messages() retourne uniquement l'historique passé (user+agent alternés).
+        // Sinon le message courant se retrouve deux fois dans le contexte Gemini.
         try {
             $response = (new FinCoachAgent($user))->prompt($request->contenu);
             $reponse  = (string) $response;
@@ -54,7 +48,14 @@ class MessageController extends Controller
             ], 503);
         }
 
-        // Sauvegarde de la réponse du coach
+        // Sauvegarde du message utilisateur puis de la réponse du coach
+        Message::create([
+            'user_id'    => $user->id,
+            'contenu'    => $request->contenu,
+            'expediteur' => 'utilisateur',
+            'date'       => $now,
+        ]);
+
         $agentMsg = Message::create([
             'user_id'    => $user->id,
             'contenu'    => $reponse,
