@@ -40,9 +40,16 @@ class MessageController extends Controller
             $response = (new FinCoachAgent($user))->prompt($request->contenu);
             $reponse  = (string) $response;
         } catch (\Throwable $e) {
+            $msg = $e->getMessage();
+            if (str_contains(strtolower($msg), 'rate limit') || str_contains(strtolower($msg), 'quota')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Trop de messages envoyés. Patientez quelques secondes avant de réessayer.',
+                ], 429);
+            }
             return response()->json([
                 'success' => false,
-                'message' => 'Le coach IA est temporairement indisponible : ' . $e->getMessage(),
+                'message' => 'Le coach IA est temporairement indisponible.',
             ], 503);
         }
 
