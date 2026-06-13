@@ -36,8 +36,15 @@ class MessageController extends Controller
         ]);
 
         // Génération de la réponse IA
-        $response = (new FinCoachAgent($user))->prompt($request->contenu);
-        $reponse  = (string) $response;
+        try {
+            $response = (new FinCoachAgent($user))->prompt($request->contenu);
+            $reponse  = (string) $response;
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Le coach IA est temporairement indisponible : ' . $e->getMessage(),
+            ], 503);
+        }
 
         // Sauvegarde de la réponse du coach
         $agentMsg = Message::create([
