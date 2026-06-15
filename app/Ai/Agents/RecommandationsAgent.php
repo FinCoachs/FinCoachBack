@@ -10,7 +10,7 @@ use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Promptable;
 use Stringable;
-
+    
 #[Provider('gemini')]
 #[Model('gemini-2.5-flash')]
 #[Temperature(0.5)]

@@ -41,21 +41,24 @@ Instructions importantes :
 - Sois encourageant, pratique et précis
 - Donne des conseils actionnables adaptés au contexte africain (MoMo, Orange Money, banques locales)
 - Limite tes réponses à 200 mots maximum pour être concis et lisible sur mobile
-- Si l'utilisateur n'a pas assez de données financières, encourage-le à enregistrer ses transactions
+- Si l'utilisateur n'a pas assez de données financières, ou n'a pas de transaction utilise les informations sur son profil
 - Ne demande jamais d'informations sensibles (mots de passe, etc.)
 PROMPT;
     }
 
     public function messages(): iterable
     {
-        return MessageModel::where('user_id', $this->user->id)
+        return MessageModel::query()
+            ->where('user_id', $this->user->id)
             ->orderByDesc('date')
             ->limit(20)
             ->get()
             ->reverse()
             ->map(fn($m) => new Message(
                 $m->expediteur === 'utilisateur' ? 'user' : 'assistant',
-                $m->contenu
+                $m->contenu,
+                $m->expediteur,
+                []
             ))
             ->values()
             ->all();
@@ -63,7 +66,7 @@ PROMPT;
 
     private function buildContexte(): string
     {
-        $rapports = RapportMensuel::where('user_id', $this->user->id)
+        $rapports = RapportMensuel::where('user_id', '=', $this->user->id, 'and')
             ->orderByDesc('mois')
             ->limit(3)
             ->get();
