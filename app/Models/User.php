@@ -53,8 +53,8 @@ class User extends Authenticatable
         return $this->hasMany(RapportMensuel::class);
     }
 
-    public function messages(): HasMany
+    public function conversations(): HasMany
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Conversation::class);
     }
 }

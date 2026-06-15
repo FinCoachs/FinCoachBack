@@ -6,21 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public $withinTransaction = false;
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::dropIfExists('messages');
-
         Schema::create('messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('conversation_id')->constrained()->cascadeOnDelete();
             $table->text('contenu');
-            $table->enum('expediteur', ['agent', 'utilisateur']);
-            $table->dateTime('date');
+            $table->enum('role', ['user', 'agent', 'system']);
             $table->timestamps();
         });
     }
