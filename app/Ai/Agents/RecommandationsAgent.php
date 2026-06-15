@@ -12,7 +12,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider('gemini')]
-#[Model('gemini-2.0-flash')]
+#[Model('gemini-2.5-flash')]
 #[Temperature(0.5)]
 class RecommandationsAgent implements Agent, HasStructuredOutput
 {
