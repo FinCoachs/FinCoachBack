@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Ai\Agents\FinCoachAgent;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,52 +19,23 @@ class MessageController extends Controller
         return response()->json(['success' => true, 'data' => $messages]);
     }
 
-    /** POST /messages — envoie un message et retourne la réponse complète du coach */
+    /** POST /messages — enregistre le message utilisateur (réponse IA à implémenter) */
     public function store(Request $request)
     {
         $request->validate(['contenu' => 'required|string|max:2000']);
 
         $user = Auth::user();
-        $now  = now();
 
-        // L'agent est appelé AVANT la sauvegarde du message utilisateur pour que
-        // messages() retourne uniquement l'historique passé (user+agent alternés).
-        // Sinon le message courant se retrouve deux fois dans le contexte Gemini.
-        try {
-            $response = (new FinCoachAgent($user))->prompt($request->contenu);
-            $reponse  = (string) $response;
-        } catch (\Throwable $e) {
-            $msg = $e->getMessage();
-            if (str_contains(strtolower($msg), 'rate limit') || str_contains(strtolower($msg), 'quota')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Trop de messages envoyés. Patientez quelques secondes avant de réessayer.',
-                ], 429);
-            }
-            return response()->json([
-                'success' => false,
-                'message' => 'Le coach IA est temporairement indisponible.',
-            ], 503);
-        }
-
-        // Sauvegarde du message utilisateur puis de la réponse du coach
-        Message::create([
+        $message = Message::create([
             'user_id'    => $user->id,
             'contenu'    => $request->contenu,
             'expediteur' => 'utilisateur',
-            'date'       => $now,
-        ]);
-
-        $agentMsg = Message::create([
-            'user_id'    => $user->id,
-            'contenu'    => $reponse,
-            'expediteur' => 'agent',
             'date'       => now(),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => $agentMsg,
+            'data'    => $message,
         ]);
     }
 

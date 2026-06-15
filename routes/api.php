@@ -77,9 +77,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Recommandations IA
     Route::get('/recommandations', [RecommandationsController::class, 'index']);
 
-    // Chat Coach IA — POST limité à 8 requêtes/minute par utilisateur
+    // Chat Coach IA
     Route::get('/messages',    [MessageController::class, 'index']);
-    Route::post('/messages',   [MessageController::class, 'store'])->middleware('throttle:8,1');
+    Route::post('/messages',   [MessageController::class, 'store']);
     Route::delete('/messages', [MessageController::class, 'destroy']);
 
 });

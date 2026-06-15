@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Ai\Agents\RecommandationsAgent;
 use App\Models\Categorie;
 use App\Models\RapportMensuel;
 use Carbon\Carbon;
@@ -16,7 +15,6 @@ class RecommandationsController extends Controller
         $now   = Carbon::now();
         $debut = $now->copy()->startOfMonth();
 
-        // Collecte des données financières du mois en cours
         $categories = Categorie::where('user_id', $user->id)
             ->withSum(['transactions as depenses_mois' => fn($q) =>
                 $q->where('type', 'depense')->where('date', '>=', $debut)
@@ -27,12 +25,7 @@ class RecommandationsController extends Controller
             ->orderByDesc('created_at')
             ->first();
 
-        // Résumé du contexte pour l'IA
-        $contexte = $this->buildContexte($user, $categories, $dernierRapport, $now);
-
-        // Génération IA avec fallback rule-based
-        $recommandations = $this->genererRecommandationsIA($contexte)
-            ?? $this->recommandationsRuleBased($categories, $dernierRapport, $now);
+        $recommandations = $this->recommandationsRuleBased($categories, $dernierRapport, $now);
 
         return response()->json([
             'success' => true,
@@ -40,59 +33,9 @@ class RecommandationsController extends Controller
         ]);
     }
 
-    private function buildContexte($user, $categories, $dernierRapport, Carbon $now): string
-    {
-        $joursRestants = $now->diffInDays($now->copy()->endOfMonth());
-
-        $budgetLines = $categories
-            ->filter(fn($c) => $c->plafond && $c->plafond > 0)
-            ->map(function ($c) {
-                $dep = (float) ($c->depenses_mois ?? 0);
-                $pct = round(($dep / $c->plafond) * 100);
-                return "- {$c->libelle} : " . number_format($dep, 0, ',', ' ') .
-                       " / " . number_format($c->plafond, 0, ',', ' ') .
-                       " FCFA ({$pct}%)";
-            })
-            ->join("\n");
-
-        $totalDepenses = number_format((float) $categories->sum('depenses_mois'), 0, ',', ' ');
-
-        $rapportInfo = $dernierRapport
-            ? "Dernier rapport (" . Carbon::parse($dernierRapport->mois)->translatedFormat('F Y') . ") : " . $dernierRapport->description
-            : "Aucun rapport mensuel disponible.";
-
-        return <<<CONTEXT
-Utilisateur : {$user->name}
-Mois en cours : {$now->translatedFormat('F Y')} ({$joursRestants} jours restants)
-Dépenses totales ce mois : {$totalDepenses} FCFA
-
-Budgets par catégorie :
-{$budgetLines}
-
-{$rapportInfo}
-CONTEXT;
-    }
-
-    private function genererRecommandationsIA(string $contexte): ?array
-    {
-        try {
-            $response = (new RecommandationsAgent)->prompt(
-                "Analyse le profil financier suivant et génère des recommandations personnalisées :\n\n{$contexte}"
-            );
-
-            $data = $response['recommandations'] ?? [];
-
-            return !empty($data) ? $data : null;
-        } catch (\Throwable) {
-            return null;
-        }
-    }
-
-    /** Fallback rule-based si l'IA échoue */
     private function recommandationsRuleBased($categories, $dernierRapport, Carbon $now): array
     {
         $recs = [];
-        $debut = $now->copy()->startOfMonth();
 
         foreach ($categories as $cat) {
             if (!$cat->plafond || $cat->plafond <= 0) continue;
