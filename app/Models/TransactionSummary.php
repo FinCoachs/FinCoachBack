@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\Aggregatscast;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,7 +31,7 @@ class TransactionSummary extends Model
             'period_start'          => 'date',
             'period_end'            => 'date',
             'last_transaction_date' => 'date',
-            'aggregats'             => 'array',
+            'aggregats'             => Aggregatscast::class,
             'generated_at'          => 'datetime',
         ];
     }
