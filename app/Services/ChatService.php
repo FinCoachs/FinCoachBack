@@ -78,6 +78,25 @@ final class ChatService
         return true;
     }
 
+    /**
+     * Liste les conversations de l'utilisateur, de la plus récente à la plus ancienne.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function listConversations(User $user, int $limit = 30): array
+    {
+        $conversationsTable = config('ai.conversations.tables.conversations', 'agent_conversations');
+
+        return DB::table($conversationsTable)
+            ->where('user_id', $user->id)
+            ->orderByDesc('updated_at')
+            ->limit($limit)
+            ->get(['id', 'title', 'updated_at', 'created_at'])
+            ->map(fn ($row) => (array) $row)
+            ->values()
+            ->all();
+    }
+
     private function conversationBelongsToUser(string $conversationId, User $user): bool
     {
         $conversationsTable = config('ai.conversations.tables.conversations', 'agent_conversations');

@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Chat IA avec streaming SSE (30 messages/min)
     Route::prefix('chat')->middleware('throttle:30,1')->group(function () {
         Route::post('/messages',                                    [ChatController::class, 'send']);
+        Route::get('/conversations',                                [ChatController::class, 'listConversations']);
         Route::get('/conversation/latest',                          [ChatController::class, 'latestConversation']);
         Route::get('/conversations/{conversationId}/messages',      [ChatController::class, 'messages']);
         Route::delete('/conversations/{conversationId}',            [ChatController::class, 'deleteConversation']);

@@ -37,6 +37,21 @@ final class ChatController extends Controller
     }
 
     /**
+     * Liste toutes les conversations de l'utilisateur (de la plus récente à la plus ancienne).
+     *
+     * GET /chat/conversations
+     */
+    public function listConversations(Request $request): JsonResponse
+    {
+        $conversations = $this->chatService->listConversations($request->user());
+
+        return response()->json([
+            'success' => true,
+            'data'    => $conversations,
+        ]);
+    }
+
+    /**
      * Retourne l'ID de la dernière conversation de l'utilisateur.
      *
      * GET /chat/conversation/latest
