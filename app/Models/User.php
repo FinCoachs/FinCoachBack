@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -53,8 +54,19 @@ class User extends Authenticatable
         return $this->hasMany(RapportMensuel::class);
     }
 
-    public function messages(): HasMany
+    public function conversations(): HasMany
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Conversation::class);
+    }
+
+    public function transactionSummaries(): HasMany
+    {
+        return $this->hasMany(TransactionSummary::class);
+    }
+
+    /** Résumé le plus récent, tous types confondus. */
+    public function latestTransactionSummary(): HasOne
+    {
+        return $this->hasOne(TransactionSummary::class)->latestOfMany('generated_at');
     }
 }

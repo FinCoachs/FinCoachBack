@@ -1,82 +1,95 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Agents;
 
-use App\Models\Message as MessageModel;
-use App\Models\RapportMensuel;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Ai\Attributes\Model;
-use Laravel\Ai\Attributes\Provider;
-use Laravel\Ai\Attributes\Temperature;
+use App\Ai\Tools\ConsulterProfil;
+use App\Ai\Tools\ConsulterSolde;
+use App\Ai\Tools\ListerTransactions;
+use App\Services\Summary\TransactionSummaryService;
+use Laravel\Ai\Attributes\MaxSteps;
+use Laravel\Ai\Attributes\MaxTokens;
+use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
-use Laravel\Ai\Messages\Message;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
-use Stringable;
 
-#[Provider('gemini')]
-#[Model('gemini-2.0-flash')]
-#[Temperature(0.7)]
-class FinCoachAgent implements Agent, Conversational
+#[MaxSteps(5)]
+#[MaxTokens(800)]
+class FinCoachAgent implements Agent, Conversational, HasTools
 {
-    use Promptable;
+    use Promptable, RemembersConversations;
 
-    public function __construct(private readonly User $user) {}
+    public function __construct(
+        private readonly TransactionSummaryService $summaryService,
+    ) {}
 
-    public function instructions(): Stringable|string
+    public function instructions(): string
     {
-        $contexte = $this->buildContexte();
+        $today = now()->locale('fr')->isoFormat('dddd D MMMM YYYY');
+        $user  = $this->conversationUser;
 
-        return <<<PROMPT
-Tu es FinCoach, un assistant coach financier bienveillant et expert en finances personnelles en Afrique de l'Ouest (monnaie : FCFA).
-Tu aides {$this->user->name} à mieux gérer ses finances personnelles au quotidien.
+        $header = <<<HEADER
+        Tu es FinCoach, un assistant financier personnel bienveillant et francophone.
+        Aujourd'hui : {$today}.
+        Langue : réponds TOUJOURS en français, sauf si l'utilisateur t'écrit en anglais — dans ce cas réponds en anglais.
+        Montants : exprime-les en FCFA avec séparateur de milliers (ex : 320 000 FCFA).
+        Sécurité : tu n'accèdes qu'aux données de l'utilisateur connecté. Refuse poliment toute demande concernant d'autres comptes.
+        Périmètre : si la question sort des finances personnelles, recentre poliment la conversation.
+        HEADER;
 
-Contexte financier actuel de l'utilisateur :
-{$contexte}
-
-Instructions importantes :
-- Réponds TOUJOURS en français
-- Sois encourageant, pratique et précis
-- Donne des conseils actionnables adaptés au contexte africain (MoMo, Orange Money, banques locales)
-- Limite tes réponses à 200 mots maximum pour être concis et lisible sur mobile
-- Si l'utilisateur n'a pas assez de données financières, ou n'a pas de transaction utilise les informations sur son profil
-- Ne demande jamais d'informations sensibles (mots de passe, etc.)
-PROMPT;
-    }
-
-    public function messages(): iterable
-    {
-        return MessageModel::query()
-            ->where('user_id', $this->user->id)
-            ->orderByDesc('date')
-            ->limit(20)
-            ->get()
-            ->reverse()
-            ->map(fn($m) => new Message(
-                $m->expediteur === 'utilisateur' ? 'user' : 'assistant',
-                $m->contenu,
-                $m->expediteur,
-                []
-            ))
-            ->values()
-            ->all();
-    }
-
-    private function buildContexte(): string
-    {
-        $rapports = RapportMensuel::where('user_id', '=', $this->user->id, 'and')
-            ->orderByDesc('mois')
-            ->limit(3)
-            ->get();
-
-        if ($rapports->isEmpty()) {
-            return "Aucun rapport mensuel disponible. L'utilisateur commence tout juste à utiliser FinCoach.";
+        if ($user === null) {
+            return $header;
         }
 
-        return $rapports->map(fn($r) =>
-            Carbon::parse($r->mois)->translatedFormat('F Y') . " : " . $r->description
-        )->join("\n");
+        $summary = $this->summaryService->getFreshSummary($user);
+
+        if ($summary->isEmpty()) {
+            return $header . "\n\nL'utilisateur n'a pas encore enregistré de transactions. Encourage-le à en ajouter pour bénéficier d'une analyse personnalisée.";
+        }
+
+        $agg        = $summary->aggregats;
+        $debut      = $summary->period_start->format('d/m/Y');
+        $fin        = $summary->period_end->format('d/m/Y');
+        $revenus    = number_format((float) $agg['total_revenus'], 0, ',', ' ');
+        $depenses   = number_format((float) $agg['total_depenses'], 0, ',', ' ');
+        $net        = number_format((float) $agg['net'], 0, ',', ' ');
+        $nbTx       = $agg['transaction_count'];
+        $nbRev      = $agg['revenus_count'];
+        $nbDep      = $agg['depenses_count'];
+
+        $categories = collect($agg['par_categorie'] ?? [])->map(function (array $cat): string {
+            $total = number_format((float) $cat['total'], 0, ',', ' ');
+            return "  - {$cat['libelle']} ({$cat['type']}) : {$total} FCFA ({$cat['count']} opérations)";
+        })->implode("\n");
+
+        $categoriesBlock = $categories !== '' ? "\nPar catégorie :\n{$categories}" : '';
+
+        return <<<INSTRUCTIONS
+        {$header}
+
+        === RÉSUMÉ FINANCIER (du {$debut} au {$fin}) ===
+        Revenus totaux   : {$revenus} FCFA
+        Dépenses totales : {$depenses} FCFA
+        Solde net        : {$net} FCFA
+        Transactions     : {$nbTx} ({$nbRev} revenus, {$nbDep} dépenses){$categoriesBlock}
+
+        Ce résumé est ta référence principale. Utilise les outils disponibles uniquement pour des détails complémentaires (solde en temps réel, liste de transactions récentes, profil).
+        INSTRUCTIONS;
+    }
+
+    /**
+     * @return Tool[]
+     */
+    public function tools(): iterable
+    {
+        return [
+            app(ConsulterSolde::class),
+            app(ListerTransactions::class),
+            app(ConsulterProfil::class),
+        ];
     }
 }
