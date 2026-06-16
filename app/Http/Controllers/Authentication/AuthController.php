@@ -95,11 +95,9 @@ class AuthController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'token'   => $token,
             'user'    => new UserResource($user),
         ], 201);
     }

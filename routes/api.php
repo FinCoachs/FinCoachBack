@@ -10,6 +10,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RecommandationsController;
 use App\Http\Controllers\Transaction\BudgetController;
 use App\Http\Controllers\Transaction\TransactionController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Compte\CompteController;
 
 Route::post('/auth/google', GoogleController::class);
@@ -77,9 +78,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Recommandations IA
     Route::get('/recommandations', [RecommandationsController::class, 'index']);
 
-    // Chat Coach IA
+    // Chat Coach IA (ancienne API simple)
     Route::get('/messages',    [MessageController::class, 'index']);
     Route::post('/messages',   [MessageController::class, 'store']);
     Route::delete('/messages', [MessageController::class, 'destroy']);
+
+    // Chat IA avec streaming SSE (30 messages/min)
+    Route::prefix('chat')->middleware('throttle:30,1')->group(function () {
+        Route::post('/messages',                                    [ChatController::class, 'send']);
+        Route::get('/conversation/latest',                          [ChatController::class, 'latestConversation']);
+        Route::get('/conversations/{conversationId}/messages',      [ChatController::class, 'messages']);
+        Route::delete('/conversations/{conversationId}',            [ChatController::class, 'deleteConversation']);
+    });
 
 });
