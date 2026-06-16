@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     // Same Neon pgBouncer workaround as create_conversations_table.
-    public bool $withinTransaction = false;
+    public $withinTransaction = false;
 
     public function up(): void
     {

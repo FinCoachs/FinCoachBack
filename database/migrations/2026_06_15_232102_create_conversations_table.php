@@ -9,7 +9,7 @@ return new class extends Migration
     // Neon pgBouncer (transaction mode) can return connections with an already-aborted
     // transaction state. Running outside a transaction gives each statement its own
     // clean connection checkout, avoiding SQLSTATE[25P02] on the first DDL.
-    public bool $withinTransaction = false;
+    public $withinTransaction = false;
 
     public function up(): void
     {
