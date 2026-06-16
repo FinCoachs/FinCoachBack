@@ -17,8 +17,8 @@ use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
 
-#[MaxSteps(5)]
-#[MaxTokens(800)]
+#[MaxSteps(10)]
+#[MaxTokens(4096)]
 class FinCoachAgent implements Agent, Conversational, HasTools
 {
     use Promptable, RemembersConversations;
